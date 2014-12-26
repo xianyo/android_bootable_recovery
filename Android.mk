@@ -80,7 +80,7 @@ ifeq ($(TARGET_USERIMAGES_USE_EXT4), true)
 endif
 
 LOCAL_CFLAGS += -DUSE_UBIFS
-LOCAL_C_INCLUDES += external/mtd-utils/new-utils/include/ system/vold
+LOCAL_C_INCLUDES += external/mtd-utils/ubi-utils/include external/mtd-utils/include system/vold
 LOCAL_STATIC_LIBRARIES += libubi
 LOCAL_SRC_FILES += ubi.cpp
 
