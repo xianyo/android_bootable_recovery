@@ -55,6 +55,57 @@
 #endif
 
 
+static char const boot_device_preamble[] = {
+    "/dev/block/"
+};
+
+static char const boot_device_trailer[] = {
+    "p"
+};
+
+static char const *boot_device_base=0;
+static unsigned boot_device_base_len=0;
+static char const boot_device_default[] = {
+        "mmcblk3"
+};
+
+static char const *get_boot_device_base(void){
+    if (0 == boot_device_base) {
+        boot_device_base = getenv("androidboot.bootdev");
+        if (!boot_device_base)
+            boot_device_base = boot_device_default;
+        boot_device_base_len = strlen(boot_device_base);
+        printf("boot device base == %s\n", boot_device_base);
+    }
+    return boot_device_base;
+}
+
+static char *get_boot_device(char const *fstab_entry)
+{
+    if(!strncmp("$BD",fstab_entry,3)){
+        char const *bootdev = get_boot_device_base();
+        unsigned len=sizeof(boot_device_preamble)
+                + boot_device_base_len
+                + strlen(fstab_entry+3)
+                + sizeof(boot_device_trailer)
+                + 1;
+        char *rval = malloc(len);
+        char *nextout = rval;
+        memcpy(rval,boot_device_preamble,sizeof(boot_device_preamble)-1);
+        nextout = rval+sizeof(boot_device_preamble)-1;
+        memcpy(nextout,boot_device_base,boot_device_base_len);
+        nextout += boot_device_base_len;
+        if (0 != strstr(bootdev,"mmc")) {
+            memcpy(nextout,boot_device_trailer,sizeof(boot_device_trailer)-1);
+            nextout += sizeof(boot_device_trailer)-1;
+        }
+        strcpy(nextout,fstab_entry+3);
+        return rval;
+    } else {
+        return strdup(fstab_entry);
+    }
+}
+
 // mount(fs_type, partition_type, location, mount_point)
 //
 //    fs_type="yaffs2" partition_type="MTD"     location=partition
@@ -105,6 +156,9 @@ Value* MountFn(const char* name, State* state, int argc, Expr* argv[]) {
         freecon(secontext);
         setfscreatecon(NULL);
     }
+
+    /* Update location value if depending on cmdline */
+    location = get_boot_device(location);
 
     if (strcmp(partition_type, "MTD") == 0) {
         mtd_scan_partitions();
@@ -243,6 +297,9 @@ Value* FormatFn(const char* name, State* state, int argc, Expr* argv[]) {
         ErrorAbort(state, "mount_point argument to %s() can't be empty", name);
         goto done;
     }
+
+    /* Update location value if depending on cmdline */
+    location = get_boot_device(location);
 
     if (strcmp(partition_type, "MTD") == 0) {
         mtd_scan_partitions();
