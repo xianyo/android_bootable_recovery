@@ -731,7 +731,6 @@ Value* BlockImageUpdateFn(const char* name, State* state, int argc, Expr* argv[]
 
                     if (ioctl(fd, BLKDISCARD, &range) < 0) {
                         ErrorAbort(state, "    blkdiscard failed: %s\n", strerror(errno));
-                        goto done;
                     }
                 }
 
