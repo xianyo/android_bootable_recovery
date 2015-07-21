@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
         free(state.errmsg);
         return 7;
     } else {
-        fprintf(cmd_pipe, "ui_print script succeeded: result was [%s]\n", result);
+        fprintf(cmd_pipe, "ui_print script succeeded\n");
         free(result);
     }
 
