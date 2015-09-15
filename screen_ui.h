@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2015 Freescale Semiconductor, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +83,7 @@ class ScreenRecoveryUI : public RecoveryUI {
 
     // true when both graphics pages are the same (except for the
     // progress bar)
-    bool pagesIdentical;
+    int pagesIdentical;
 
     static const int kMaxCols = 96;
     static const int kMaxRows = 96;
