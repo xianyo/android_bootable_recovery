@@ -52,7 +52,7 @@ void mtd_read_close(MtdReadContext *);
 void mtd_read_skip_to(const MtdReadContext *, size_t offset);
 
 MtdWriteContext *mtd_write_partition(const MtdPartition *);
-MtdWriteContext *mtd_write_bootloader_partition(const MtdPartition *);
+MtdWriteContext *mtd_write_bootloader_partition(const MtdPartition *, off_t);
 ssize_t mtd_write_data(MtdWriteContext *, const char *data, size_t data_len);
 off_t mtd_erase_blocks(MtdWriteContext *, int blocks);  /* 0 ok, -1 for all */
 off_t mtd_find_write_start(MtdWriteContext *ctx, off_t pos);
